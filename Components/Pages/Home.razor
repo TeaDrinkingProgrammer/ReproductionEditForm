@@ -1,0 +1,54 @@
+﻿@page "/"
+
+@* @rendermode InteractiveServer *@
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>App Versions</PageTitle>
+<div>
+    @foreach (var appVersion in Appversions)
+    {
+        var formName = appVersion.Id.ToString();
+        @appVersion.VersionNumber
+        <EditForm Model="appVersion" OnValidSubmit="@ValidUpdateFormSubmitted" FormName="@formName">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <span>VersionNumber</span>
+            <input type="text"
+                   placeholder=""
+                   class="bg-slate-700"
+                   @bind="appVersion.VersionNumber"/>
+            <button type="submit">
+                Save
+            </button>
+        </EditForm>
+    }
+</div>
+
+@code {
+
+    public class AppVersion //: BaseEntity
+    {
+        public int Id { get; set; }
+
+        [Required]
+        public string? VersionNumber { get; set; }
+    }
+    
+    private IList<AppVersion>? Appversions { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Appversions = new List<AppVersion>
+        {
+            new() { Id = 1, VersionNumber = "1.0.0" },
+            new() { Id = 2, VersionNumber = "1.0.1" },
+            new() { Id = 3, VersionNumber = "1.0.2" }
+        };
+    }
+
+    private void ValidUpdateFormSubmitted(EditContext editContext)
+    {
+        var appVersion = editContext.Model as AppVersion;
+        Console.WriteLine($"Appversion number in Blazor page: {appVersion?.VersionNumber}");
+    }
+}
